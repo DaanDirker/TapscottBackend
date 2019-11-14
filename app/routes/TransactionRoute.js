@@ -1,6 +1,6 @@
 const maxTransactions = 20;
 
-module.exports = (app, config, web3, contract) => {
+module.exports = (app, web3, contract) => {
 
     //Retrieving newest transactions
     app.get('/transactions/new/:amount', (req, res) => {
@@ -29,7 +29,7 @@ module.exports = (app, config, web3, contract) => {
     });
 
     app.post('/test/:number', (req, res) => {
-        contract.methods.setNumber(20).call().then(() => {
+        contract.methods.setNumber(20).call({from: web3.eth.defaultAccount}).then(() => {
             console.log('Setting number to 20');
             res.send('Setting number to 20');
         }).catch((err) => {

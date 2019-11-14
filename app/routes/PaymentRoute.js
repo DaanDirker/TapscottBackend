@@ -1,13 +1,12 @@
 const axios = require('axios');
+require('dotenv').config();
 
-module.exports = (app, config) => {
+module.exports = (app) => {
 
     // Adding a payment
     app.post('/payment/:price', (req, res) => {
-        console.log(config.mollie.baseEndpoint + " " + config.mollie.testToken);
-        
         //Create payment with Mollie
-        axios.post(config.mollie.baseEndpoint + '/payment', {
+        axios.post(process.env.MOLLIE_ENDPOINT + '/payment', {
             amount: {
                 currency: "EUR",
                 value: req.params.price
@@ -17,7 +16,7 @@ module.exports = (app, config) => {
             method: "ideal"
         },
         {
-            headers: {'Authorization': "bearer " + config.mollie.testToken}
+            headers: {'Authorization': "bearer " + process.env.MOLLIE_TEST_TOKEN}
         }).then((resp) => {
             console.log(resp);
             res.send(resp)
