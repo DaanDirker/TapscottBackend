@@ -8,7 +8,7 @@ let web3;
 let contract;
 
 // Setup 2 enviorements: ganache and ropsten testnet
-if (process.env.ENVIOREMENT == "ganache") {
+if (process.env.ENVIRONMENT == "ganache") {
     web3 = new Web3(new Web3.providers.HttpProvider("http://" + process.env.GANACHE_HOST 
         + ":" + process.env.GANACHE_PORT));
     
@@ -19,7 +19,7 @@ if (process.env.ENVIOREMENT == "ganache") {
 
     const abi = require('./build/contracts/Testing.json').abi;
     contract = new web3.eth.Contract(abi, process.env.CONTRACT_ADDRESS);
-} else if (process.env.ENVIOREMENT == "testnet") {
+} else if (process.env.ENVIRONMENT == "testnet") {
     web3 = new Web3(new Web3.providers.HttpProvider(process.env.INFURA_ENDPOINT));
 } else {
     return;
