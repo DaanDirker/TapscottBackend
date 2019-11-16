@@ -45,4 +45,4 @@ typings/
 .cache
 
 # contract builds
-build
+build/*
