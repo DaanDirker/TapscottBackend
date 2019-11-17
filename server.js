@@ -1,8 +1,17 @@
+require('dotenv').config();
 const express = require('express');
 const Web3 = require('web3');
 const app = express();
+const { createMollieClient } = require('@mollie/api-client');
+const bodyParser = require('body-parser');
 
-require('dotenv').config();
+app.use(
+    bodyParser.urlencoded({
+        extended: true
+    })
+);
+
+app.use(bodyParser.json());
 
 let web3;
 let contract;
@@ -25,11 +34,10 @@ if (process.env.ENVIRONMENT == "ganache") {
     return;
 }
 
-require('./app/routes')(app, web3, contract)
+const mollieClient = createMollieClient({ apiKey: process.env.MOLLIE_TEST_TOKEN });
+require('./app/routes')(app, web3, contract, mollieClient);
 
 app.listen(process.env.BACKEND_PORT, process.env.BACKEND_HOST, (err) => {
     if (err) console.log(err);
     console.log('Succesfully started backend on port ' + process.env.BACKEND_PORT);
 });
-
-

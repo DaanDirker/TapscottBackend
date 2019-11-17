@@ -1,44 +1,60 @@
 const maxTransactions = 20;
 
-module.exports = (app, web3, contract) => {
+module.exports = (app, web3, contract, mollieClient) => {
 
     //Retrieving newest transactions
-    app.get('/transactions/new/:amount', (req, res) => {
-        const amount = req.params.amount;
+    app.get('/transactions/new/:limit', (req, res) => {
+        const amount = req.params.limit;
 
         if (amount > maxTransactions) amount = maxTransactions;
         res.send(amount);
     });
 
     //Retrieving highest amount donated transactions
-    app.get('/transactions/highest/:amount', (req, res) => {
-        const amount = req.params.amount;
+    app.get('/transactions/highest/:limit', (req, res) => {
+        const amount = req.params.limit;
 
         if (amount > maxTransactions) amount = maxTransactions;
         res.send(amount);
     });
 
-    //Retrieve transactions of given Public/Private key combination
+    // Retrieve transactions of given hashed IBAN
     app.get('/transactions/my', (req, res) => {
         res.send('Your Transactions!');
     });
 
-    app.post('/transaction', (req, res) => {
-        // Calling a method in the Smart Contract
-        // res.send(contract.getNumber());
+    app.post('/transaction/save', async (req, res) => {
+        const paymentId = req.body.id;
+        const payment = await mollieClient.payments.get(paymentId);
+
+        if (payment.isPaid()) {
+            const { paidAt, metadata } = payment;
+            const { value, currency } = payment.amount;
+            const { consumerAccount } = payment.details;
+
+            console.log("Timestamp: " + paidAt + "\n"
+                + "User: " + metadata + "\n" 
+                + "Amount: " + value + " Currency: " + currency
+                + "IBAN: " + consumerAccount);
+            console.log("Payment Completed for payment " + paymentId);
+            //TODO: Add payment details onto the smart contract!
+        }
+        res.end();
     });
 
-    app.post('/test/:number', (req, res) => {
-        contract.methods.setNumber(20).call({from: web3.eth.defaultAccount}).then(() => {
-            console.log('Setting number to 20');
-            res.send('Setting number to 20');
-        }).catch((err) => {
-            console.log('Failed to set number');
-            res.send('Failed to set number');
-        });
-    })
+    // TESTING METHODS
 
-    app.get('/test', (req, res) => {
+    app.post('/test/:amount', (req, res) => {
+        const amount = req.params.amount;
+
+        contract.methods.setNumber(amount)
+            .send({from: web3.eth.defaultAccount}).then(() => {
+                console.log('Setting number to ' + amount);
+                res.send('Setting number to ' + amount);
+        });
+    });
+
+    app.get('/test', (req, res) => {        
         contract.methods.getNumber().call().then((number) => {
             console.log('Number = ' + number);
             res.send(number);
