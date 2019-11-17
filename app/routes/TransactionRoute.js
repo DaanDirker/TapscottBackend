@@ -32,13 +32,14 @@ module.exports = (app, web3, contract, mollieClient) => {
             const { value, currency } = payment.amount;
             const { consumerAccount } = payment.details;
 
+            console.log("================Payment Details================");
             console.log("Timestamp: " + paidAt + "\n"
                 + "User: " + metadata + "\n" 
-                + "Amount: " + value + " Currency: " + currency
-                + "IBAN: " + consumerAccount);
-            console.log("Payment Completed for payment " + paymentId);
+                + "Amount: " + value + " Currency: " + currency + "\n"
+                + "IBAN: " + consumerAccount + "\n");
             //TODO: Add payment details onto the smart contract!
         }
+        res.status(200);
         res.end();
     });
 
@@ -63,4 +64,4 @@ module.exports = (app, web3, contract, mollieClient) => {
             res.send('Failed to retrieve number');
         });
     });
-};
+}

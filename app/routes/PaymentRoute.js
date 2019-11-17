@@ -20,9 +20,13 @@ module.exports = (app, mollieClient) => {
             webhookUrl: WEBHOOK_URL,
             metadata: name
         }).then(payment => {
-            console.log(payment.getCheckoutUrl());
+            let response = {
+                'id': payment.id,
+                'checkoutUrl': payment.getCheckoutUrl(),
+                'user': payment.metadata,
+            }
             res.status(200);
-            res.send(payment.getCheckoutUrl());
+            res.json(response);
         }).catch(error => {
             console.log(error);
             res.send(error);
