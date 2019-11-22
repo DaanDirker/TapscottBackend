@@ -49,3 +49,6 @@ build/contracts/*
 
 # environment
 .env
+
+# build
+build/

@@ -1,23 +1,24 @@
 pragma solidity >=0.4.22 <0.6.0;
+pragma experimental ABIEncoderV2; // Testing
 
 contract Donations {
     
     struct Donation {
-        string sender;
-        string receiver;
+        string name;
+        uint sender;
+        uint receiver;
         uint timestamp;
         uint amount;
     }
     
     Donation[] donationCollection;
     
-    mapping (address => Donation[]) public DonationAddress;
-    
     // enter a new donation
-    function addDonation(string memory _sender, string memory _receiver, uint _timestamp, uint _amount) public{
-        Donation memory newDonation = Donation(_sender, _receiver, _timestamp, _amount);
+    function addDonation(string memory _name, string memory _sender, string memory _receiver, uint _timestamp, uint _amount) public{
+        uint encodedSender = uint(keccak256(abi.encodePacked(_sender)));
+        uint encodedReceiver = uint(keccak256(abi.encodePacked(_receiver)));
+        Donation memory newDonation = Donation(_name, encodedSender, encodedReceiver, _timestamp, _amount);
         donationCollection.push(newDonation);
-        DonationAddress[msg.sender].push(newDonation);
     }
     
     //return all donations
@@ -30,17 +31,51 @@ contract Donations {
         return sum;
     }
     
-    //return all user donations
-    function getUserDonations() public view returns(uint[] memory, uint[] memory){
-        // return DonationAddress[msg.sender];
-        uint256[] memory sum = new uint256[](DonationAddress[msg.sender].length);
-        uint256[] memory timesum = new uint256[](DonationAddress[msg.sender].length);
-        for (uint i = 0; i < DonationAddress[msg.sender].length; i++) {
-            sum[i] = DonationAddress[msg.sender][i].amount;
-            timesum[i] = DonationAddress[msg.sender][i].timestamp;
-        }
-        return (sum, timesum);
+    function getArrayDonations(uint[] memory _indexes) public view returns(string[] memory, uint[] memory, uint[] memory, uint[] memory, uint[] memory){
+        string[] memory names = new string[](_indexes.length);
+        uint[] memory senders = new uint[](_indexes.length);
+        uint[] memory receivers = new uint[](_indexes.length);
+        uint[]    memory timestamps = new uint[](_indexes.length);
+        uint[]    memory amounts = new uint[](_indexes.length);
+        
+        for (uint i = 0; i < _indexes.length; i++) {
+            Donation storage donation = donationCollection[_indexes[i]];
+            names[i] = donation.name;
+            senders[i] = donation.sender;
+            receivers[i] = donation.receiver;
+            timestamps[i] = donation.timestamp;
+            amounts[i] = donation.amount;
+        } 
+        return (names, senders, receivers, timestamps, amounts);
     }
+    
+    function getStructDonations() public view returns(Donation[] memory){
+        return donationCollection;
+    }
+    
+    //return all user donations
+    // function getUserDonations() public view returns(uint[] memory, uint[] memory){
+    //     // return DonationAddress[msg.sender];
+    //     uint256[] memory sum = new uint256[](DonationAddress[msg.sender].length);
+    //     uint256[] memory timesum = new uint256[](DonationAddress[msg.sender].length);
+    //     for (uint i = 0; i < DonationAddress[msg.sender].length; i++) {
+    //         sum[i] = DonationAddress[msg.sender][i].amount;
+    //         timesum[i] = DonationAddress[msg.sender][i].timestamp;
+    //     }
+    //     return (sum, timesum);
+    // }
+    
+    function getUserDonations(string memory _sender) public view returns(uint[] memory){
+        uint256[] memory sum = new uint256[](donationCollection.length);
+        for (uint i = 0; i < donationCollection.length; i++) {
+            // if(keccak256(abi.encodePacked((_sender))) == keccak256(abi.encodePacked((donationCollection[i].sender)))){
+            if(uint(keccak256(abi.encodePacked((_sender)))) == donationCollection[i].sender){
+                sum[i] = donationCollection[i].amount;
+            }
+        }
+        return sum;
+    }
+    
     
     function returnEncodedStruct() public view returns(bytes32) {
         Donation memory don = donationCollection[0];
