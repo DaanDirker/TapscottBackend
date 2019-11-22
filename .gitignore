@@ -46,3 +46,6 @@ typings/
 
 # contract builds
 build/contracts/*
+
+# environment
+.env
