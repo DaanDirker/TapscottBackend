@@ -51,4 +51,4 @@ build/contracts/*
 .env
 
 # build
-build/
+build/*
