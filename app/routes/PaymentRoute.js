@@ -1,34 +1,35 @@
 const axios = require('axios');
+require('dotenv').config();
 
-module.exports = (app, config) => {
+const WEBHOOK_URL = "https://tapscott.localtunnel.me/transaction/save";
 
-    // Adding a payment
-    app.post('/payment/:price', (req, res) => {
-        console.log(config.mollie.baseEndpoint + " " + config.mollie.testToken);
+module.exports = (app, mollieClient) => {
+
+    // Create a payment
+    app.post('/payment/:price/:name', (req, res) => {
+        const price = req.params.price;
+        const name = req.params.name;
         
-        //Create payment with Mollie
-        axios.post(config.mollie.baseEndpoint + '/payment', {
+        mollieClient.payments.create({
             amount: {
-                currency: "EUR",
-                value: req.params.price
+                value: price,
+                currency: 'EUR'
             },
-            description: "Donate",
-            redirectUrl: "https://www.google.com",
-            method: "ideal"
-        },
-        {
-            headers: {'Authorization': "bearer " + config.mollie.testToken}
-        }).then((resp) => {
-            console.log(resp);
-            res.send(resp)
-        }).catch((err) => {
-            console.log(err)
+            description: 'Save the ocean with',
+            redirectUrl: 'https://www.google.com',
+            webhookUrl: WEBHOOK_URL,
+            metadata: name
+        }).then(payment => {
+            let response = {
+                'id': payment.id,
+                'checkoutUrl': payment.getCheckoutUrl(),
+                'user': payment.metadata,
+            }
+            res.status(200);
+            res.json(response);
+        }).catch(error => {
+            console.log(error);
+            res.send(error);
         });
-        //Create a Mollie Order
-        //Listen for completion of order and/or wait for webhook result
-        
-        //How will the order be linked to an address? Given by Webhook? Metadata?
-        //If order completion has address, send request with WEB3 to write
     });
-
 }

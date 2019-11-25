@@ -1,36 +1,43 @@
+require('dotenv').config();
 const express = require('express');
 const Web3 = require('web3');
 const app = express();
+const { createMollieClient } = require('@mollie/api-client');
+const bodyParser = require('body-parser');
 
-//For HTTTPS
-// const fs = require('fs')
-// const https = require('https')
+app.use(
+    bodyParser.urlencoded({
+        extended: true
+    })
+);
 
-const config = JSON.parse(JSON.stringify(
-    require('./app/config/config')
-));
+app.use(bodyParser.json());
 
-const web3 = new Web3(new Web3.providers
-    .HttpProvider("https://ropsten.infura.io/v3/5cb9df6da72948559da0af6a72dc6084"));
-web3.eth.defaultAccount = web3.eth.accounts[0];
+let web3;
+let contract;
 
-const contractAddress = config.contract.address;
-const ABI = require('./app/config/ABI.json');
-const contract = new web3.eth.Contract(ABI, contractAddress);
+// Setup 2 enviorements: ganache and ropsten testnet
+if (process.env.ENVIRONMENT == "ganache") {
+    web3 = new Web3(new Web3.providers.HttpProvider("http://" + process.env.GANACHE_HOST 
+        + ":" + process.env.GANACHE_PORT));
+    
+    // Set account 
+    web3.eth.getAccounts().then((accounts) => {
+        web3.eth.defaultAccount = accounts[0];
+    });
 
-require('./app/routes')(app, config, web3, contract)
+    const abi = require('./build/contracts/Testing.json').abi;
+    contract = new web3.eth.Contract(abi, process.env.CONTRACT_ADDRESS);
+} else if (process.env.ENVIRONMENT == "testnet") {
+    web3 = new Web3(new Web3.providers.HttpProvider(process.env.INFURA_ENDPOINT));
+} else {
+    return;
+}
 
-app.listen(config.port, config.hostname, (err) => {
+const mollieClient = createMollieClient({ apiKey: process.env.MOLLIE_TEST_TOKEN });
+require('./app/routes')(app, web3, contract, mollieClient);
+
+app.listen(process.env.BACKEND_PORT, process.env.BACKEND_HOST, (err) => {
     if (err) console.log(err);
-    console.log('Succesfully started backend on port ' + config.port);
+    console.log('Succesfully started backend on port ' + process.env.BACKEND_PORT);
 });
-
-//FOR HTTPS TESTING WITH SSL CERTS
-// https.createServer({
-//     key: fs.readFileSync('./app/config/server.key', 'utf8'),
-//     cert: fs.readFileSync('./app/config/server.cert', 'utf8')
-//   }, app)
-//   .listen(config.port, config.hostname, (err) => {
-//     if (err) console.log(err);
-//     console.log('Succesfully started backend on port ' + config.port);
-// });
