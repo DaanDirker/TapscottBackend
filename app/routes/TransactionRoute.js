@@ -34,7 +34,7 @@ module.exports = (app, web3, contract, mollieClient) => {
 
             console.log("================Payment Details================");
             console.log("Timestamp: " + paidAt + "\n"
-                + "User: " + metadata + "\n" 
+                + "User: " + metadata + "\n"
                 + "Amount: " + value + " Currency: " + currency + "\n"
                 + "IBAN: " + consumerAccount + "\n");
             //TODO: Add payment details onto the smart contract!
@@ -49,19 +49,74 @@ module.exports = (app, web3, contract, mollieClient) => {
         const amount = req.params.amount;
 
         contract.methods.setNumber(amount)
-            .send({from: web3.eth.defaultAccount}).then(() => {
+            .send({ from: web3.eth.defaultAccount }).then(() => {
                 console.log('Setting number to ' + amount);
                 res.send('Setting number to ' + amount);
-        });
+            }).catch((err) => {
+                console.log('Failed to set number');
+                res.send('Failed to retrieve number');
+            });
     });
 
-    app.get('/test', (req, res) => {        
+    app.get('/test', (req, res) => {
         contract.methods.getNumber().call().then((number) => {
             console.log('Number = ' + number);
             res.send(number);
         }).catch((err) => {
             console.log('Failed to retrieve number');
             res.send('Failed to retrieve number');
+        });
+    });
+
+    // Donation contract calls
+
+    app.post('/addDonation/:name/:sender/:timestamp/:amount', (req, res) => {
+        const { name, sender, timestamp, amount } = req.params
+
+        contract.methods.addDonation(name, sender, timestamp, amount)
+            .send({ from: web3.eth.defaultAccount }).then(() => {
+                console.log('Succeeded making a donation ' + amount);
+                res.send('Setting number to ' + amount);
+            });
+    });
+
+    app.post('/makePayment/:receiver/:timestamp/:amount', (req, res) => {
+        const { receiver, timestamp, amount } = req.params
+
+        contract.methods.makePayment(receiver, timestamp, amount)
+            .send({ from: web3.eth.defaultAccount }).then(() => {
+                console.log('Succeeded making a donation ' + amount);
+                res.send('Setting number to ' + amount);
+            });
+    });
+
+    app.get('/getDonationsSum', (req, res) => {
+        contract.methods.calculateTotalDonationAmount().call().then((number) => {
+            console.log('Number list = ' + number);
+            res.send(number);
+        }).catch((err) => {
+            console.log('Failed to retrieve donation list');
+            res.send('Failed to retrieve donation list');
+        });
+    });
+
+    app.get('/calculateTotalDonationAmount', (req, res) => {
+        contract.methods.calculateTotalDonationAmount().call().then((number) => {
+            console.log('Number = ' + number);
+            res.send(number);
+        }).catch((err) => {
+            console.log('Failed to retrieve donation Sum');
+            res.send('Failed to retrieve donation Sum');
+        });
+    });
+
+    app.get('/calculateTotalPaymentAmount', (req, res) => {
+        contract.methods.calculateTotalPaymentAmount().call().then((number) => {
+            console.log('Number = ' + number);
+            res.send(number);
+        }).catch((err) => {
+            console.log('Failed to retrieve payment Sum');
+            res.send('Failed to retrieve payment Sum');
         });
     });
 }
