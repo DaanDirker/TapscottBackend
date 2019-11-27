@@ -22,6 +22,10 @@ ngrok http [PORT_NUMBER]
 ```
 
 And for *localtunnel* the npm script "*npm run tunnel*" has been defined. Keep in mind that only one machine can use this subdomain.
+Or starting a tunnel via your cmd
+```bash
+lt --port [PORT_NUMBER] --subdomain [TAPSCOTT_DOMAIN] 
+```
 
 ### Ganache
 To use ganache the *ENVIRONMENT* value within the .env file needs to be set to "ganache". Make sure the .env file ganache host value and port match with the ganache-cli or ganache client settings. Make sure either one of them is running.
