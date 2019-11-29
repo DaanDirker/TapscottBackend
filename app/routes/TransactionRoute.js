@@ -156,7 +156,7 @@ module.exports = (app, web3, contract, mollieClient) => {
     });
 
     app.get('/transaction/getpayments', (req, res) => {
-        contract.methods.getStructDonations().call().then((number) => {
+        contract.methods.getStructPayments().call().then((number) => {
             console.log('Number list = ' + number);
             res.send(number);
         }).catch((err) => {

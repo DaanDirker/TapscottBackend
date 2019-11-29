@@ -26,7 +26,7 @@ if (process.env.ENVIRONMENT == "ganache") {
         web3.eth.defaultAccount = accounts[0];
     });
 
-    const abi = require('./build/contracts/Donations.json').abi;
+    const abi = require('./build/contracts/Testing.json').abi;
     contract = new web3.eth.Contract(abi, process.env.CONTRACT_ADDRESS);
 } else if (process.env.ENVIRONMENT == "testnet") {
     web3 = new Web3(new Web3.providers.HttpProvider(process.env.INFURA_ENDPOINT));
