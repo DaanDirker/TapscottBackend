@@ -1,5 +1,5 @@
 pragma solidity >=0.4.22 <0.6.0;
-// pragma experimental ABIEncoderV2; // Testing
+pragma experimental ABIEncoderV2; // Testing
 
 contract Donations {
 
@@ -16,10 +16,24 @@ contract Donations {
         uint amount;
     }
 
+    struct NumberObject {
+        uint numbertje;
+    }
+
+    NumberObject[] hetNummer;
+
     Donation[] donationCollection;
     Payment[] paymentCollection;
 
     uint number;
+
+    function setNummertje (uint _newNumber) public {
+        hetNummer.push(NumberObject(_newNumber));
+    }
+
+    function getNummertje() public view returns(NumberObject[] memory) {
+        return hetNummer;
+    }
 
     function setNumber (uint newNumber) public {
         number = newNumber;
@@ -32,8 +46,8 @@ contract Donations {
     // enter a new donation
     function addDonation(string memory _name, string memory _sender, uint _timestamp, uint _amount) public{
         uint encodedSender = uint(keccak256(abi.encodePacked(_sender)));
-        Donation memory newDonation = Donation(_name, encodedSender, _timestamp, _amount);
-        donationCollection.push(newDonation);
+        // Donation memory newDonation = Donation(_name, encodedSender, _timestamp, _amount);
+        donationCollection.push(Donation(_name, encodedSender, _timestamp, _amount));
     }
 
     function makePayment(string memory _receiver, uint _timestamp, uint _amount) public{
@@ -68,9 +82,13 @@ contract Donations {
     //     return (names, senders, timestamps, amounts);
     // }
 
-    // function getStructDonations() public view returns(Donation[] memory){
-    //     return donationCollection;
-    // }
+    function getStructDonations() public view returns(Donation[] memory){
+        return donationCollection;
+    }
+
+    function getStructPayments() public view returns(Payment[] memory){
+        return paymentCollection;
+    }
 
     //return all user donations
     // function getUserDonations() public view returns(uint[] memory, uint[] memory){

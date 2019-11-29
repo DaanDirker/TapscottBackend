@@ -54,6 +54,7 @@ module.exports = (app, web3, contract, mollieClient) => {
                 res.send('Setting number to ' + amount);
             }).catch((err) => {
                 console.log('Failed to set number');
+                console.log(err.toString());
                 res.send('Failed to retrieve number');
             });
     });
@@ -68,29 +69,63 @@ module.exports = (app, web3, contract, mollieClient) => {
         });
     });
 
+
+    app.post('/testNummer/:amount', (req, res) => {
+        const amount = req.params.amount;
+
+        contract.methods.setNummertje(amount)
+            .send({ from: web3.eth.defaultAccount }).then(() => {
+                console.log('Setting number to ' + amount);
+                res.send('Setting number to ' + amount);
+            }).catch((err) => {
+                console.log('Failed to set number');
+                console.log(err.toString());
+                res.send('Failed to retrieve number');
+            });
+    });
+
+    app.get('/testNummer', (req, res) => {
+        contract.methods.getNummertje().call().then((number) => {
+            console.log('Number = ' + number);
+            res.send(number);
+        }).catch((err) => {
+            console.log('Failed to retrieve number');
+            console.log(err.toString());
+            res.send('Failed to retrieve number');
+        });
+    });
+
     // Donation contract calls
 
-    app.post('/addDonation/:name/:sender/:timestamp/:amount', (req, res) => {
+    app.post('/transaction/addDonation/:name/:sender/:timestamp/:amount', (req, res) => {
         const { name, sender, timestamp, amount } = req.params
 
         contract.methods.addDonation(name, sender, timestamp, amount)
             .send({ from: web3.eth.defaultAccount }).then(() => {
                 console.log('Succeeded making a donation ' + amount);
                 res.send('Setting number to ' + amount);
+            }).catch((err) => {
+                console.log('Failed to set donation');
+                console.log(err.toString());
+                res.send('Failed to set donation');
             });
     });
 
-    app.post('/makePayment/:receiver/:timestamp/:amount', (req, res) => {
+    app.post('/transaction/addPayment/:receiver/:timestamp/:amount', (req, res) => {
         const { receiver, timestamp, amount } = req.params
 
         contract.methods.makePayment(receiver, timestamp, amount)
             .send({ from: web3.eth.defaultAccount }).then(() => {
                 console.log('Succeeded making a donation ' + amount);
                 res.send('Setting number to ' + amount);
+            }).catch((err) => {
+                console.log('Failed to set payment');
+                console.log(err.toString());
+                res.send('Failed to set payment');
             });
     });
 
-    app.get('/getDonationsSum', (req, res) => {
+    app.get('/sum/donation', (req, res) => {
         contract.methods.calculateTotalDonationAmount().call().then((number) => {
             console.log('Number list = ' + number);
             res.send(number);
@@ -100,23 +135,33 @@ module.exports = (app, web3, contract, mollieClient) => {
         });
     });
 
-    app.get('/calculateTotalDonationAmount', (req, res) => {
-        contract.methods.calculateTotalDonationAmount().call().then((number) => {
-            console.log('Number = ' + number);
-            res.send(number);
-        }).catch((err) => {
-            console.log('Failed to retrieve donation Sum');
-            res.send('Failed to retrieve donation Sum');
-        });
-    });
-
-    app.get('/calculateTotalPaymentAmount', (req, res) => {
+    app.get('/sum/payment', (req, res) => {
         contract.methods.calculateTotalPaymentAmount().call().then((number) => {
             console.log('Number = ' + number);
             res.send(number);
         }).catch((err) => {
             console.log('Failed to retrieve payment Sum');
             res.send('Failed to retrieve payment Sum');
+        });
+    });
+
+    app.get('/transaction/getDonations', (req, res) => {
+        contract.methods.getStructDonations().call().then((number) => {
+            console.log('Number list = ' + number);
+            res.send(number);
+        }).catch((err) => {
+            console.log('Failed to retrieve donation list');
+            res.send('Failed to retrieve donation list');
+        });
+    });
+
+    app.get('/transaction/getpayments', (req, res) => {
+        contract.methods.getStructDonations().call().then((number) => {
+            console.log('Number list = ' + number);
+            res.send(number);
+        }).catch((err) => {
+            console.log('Failed to retrieve payment list');
+            res.send('Failed to retrieve payment list');
         });
     });
 }
