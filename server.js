@@ -26,12 +26,12 @@ if (process.env.ENVIRONMENT == "ganache") {
         web3.eth.defaultAccount = accounts[0];
     });
 
+    const abi = require('./build/contracts/Donations.json').abi;
+
     // Set contract with transaction limit
     contract = new web3.eth.Contract(abi, process.env.CONTRACT_ADDRESS, {
         gas: 6721975
     });
-
-    const abi = require('./build/contracts/Donations.json').abi;
 } else if (process.env.ENVIRONMENT == "testnet") {
     web3 = new Web3(new Web3.providers.HttpProvider(process.env.INFURA_ENDPOINT));
 } else {

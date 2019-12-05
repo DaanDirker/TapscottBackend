@@ -28,10 +28,10 @@ To use ganache the *ENVIRONMENT* value within the .env file needs to be set to "
 
 Now the contract need to be deployed onto ganache. This can be done using the command:
 ```bash
-truffle migrate
+truffle migrate --network development
 ```
 
-This command returns a contract address which needs to be copied into the *CONTRACT_ADDRESS* value within the *.env* file. After that ganache has been set up.
+This command returns a contract address which needs to be copied into the *CONTRACT_ADDRESS* value within the *.env* file. After that ganache has been set up. With network we specify development which has the gaslimit settings for the server.
 
 ### Server
 
