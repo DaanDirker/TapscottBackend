@@ -80,7 +80,6 @@ module.exports = (app, web3, contract, mollieClient) => {
             }).catch((err) => {
                 console.log('Failed to set number');
                 console.log(err.toString());
-                res.send('Failed to retrieve number');
             });
     });
 
@@ -107,7 +106,6 @@ module.exports = (app, web3, contract, mollieClient) => {
             }).catch((err) => {
                 console.log('Failed to set donation');
                 console.log(err.toString());
-                res.send('Failed to set donation');
             });
     });
 
