@@ -25,22 +25,12 @@ contract Donations {
     Donation[] donationCollection;
     Payment[] paymentCollection;
 
-    uint number;
-
     function setNummertje (uint _newNumber) public {
         hetNummer.push(NumberObject(_newNumber));
     }
 
     function getNummertje() public view returns(NumberObject[] memory) {
         return hetNummer;
-    }
-
-    function setNumber (uint newNumber) public {
-        number = newNumber;
-    }
-
-    function getNumber() public view returns(uint) {
-        return number;
     }
 
     // enter a new donation
@@ -65,22 +55,6 @@ contract Donations {
         }
         return sum;
     }
-
-    // function getArrayDonations(uint[] memory _indexes) public view returns(string[] memory, uint[] memory, uint[] memory, uint[] memory){
-    //     string[] memory names = new string[](_indexes.length);
-    //     uint[] memory senders = new uint[](_indexes.length);
-    //     uint[]    memory timestamps = new uint[](_indexes.length);
-    //     uint[]    memory amounts = new uint[](_indexes.length);
-
-    //     for (uint i = 0; i < _indexes.length; i++) {
-    //         Donation storage donation = donationCollection[_indexes[i]];
-    //         names[i] = donation.name;
-    //         senders[i] = donation.sender;
-    //         timestamps[i] = donation.timestamp;
-    //         amounts[i] = donation.amount;
-    //     }
-    //     return (names, senders, timestamps, amounts);
-    // }
 
     function getStructDonations() public view returns(Donation[] memory){
         return donationCollection;

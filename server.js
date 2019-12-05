@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const Web3 = require('web3');
+const ganache = require("ganache-core");
 const app = express();
 const { createMollieClient } = require('@mollie/api-client');
 const bodyParser = require('body-parser');
@@ -18,16 +19,23 @@ let contract;
 
 // Setup 2 enviorements: ganache and ropsten testnet
 if (process.env.ENVIRONMENT == "ganache") {
-    web3 = new Web3(new Web3.providers.HttpProvider("http://" + process.env.GANACHE_HOST
-        + ":" + process.env.GANACHE_PORT));
+    web3 = new Web3(ganache.provider());
+    // web3 = new Web3(new Web3.providers.HttpProvider("http://" + process.env.GANACHE_HOST
+    //     + ":" + process.env.GANACHE_PORT));
 
     // Set account 
     web3.eth.getAccounts().then((accounts) => {
         web3.eth.defaultAccount = accounts[0];
     });
 
-    const abi = require('./build/contracts/Testing.json').abi;
+    const abi = require('./build/contracts/Donations.json').abi;
     contract = new web3.eth.Contract(abi, process.env.CONTRACT_ADDRESS);
+
+    //Display gas limit
+    web3.eth.getBlock("latest").then((block) => {
+        console.log(block.gasLimit);
+        console.log(web3.eth.currentProvider.host);
+    })
 } else if (process.env.ENVIRONMENT == "testnet") {
     web3 = new Web3(new Web3.providers.HttpProvider(process.env.INFURA_ENDPOINT));
 } else {
