@@ -38,6 +38,15 @@ module.exports = (app, web3, contract, mollieClient) => {
                 + "Amount: " + value + " Currency: " + currency + "\n"
                 + "IBAN: " + consumerAccount + "\n");
             //TODO: Add payment details onto the smart contract!
+
+            contract.methods.addDonation(metadata, consumerAccount, paidAt, value)
+                .send({ from: web3.eth.defaultAccount }).then(() => {
+                    console.log('Succeeded making a donation ' + amount);
+                    res.send('Setting number to ' + amount);
+                }).catch((err) => {
+                    console.log('Failed to set donation');
+                    console.log(err.toString());
+                });
         }
         res.status(200);
         res.end();
@@ -160,6 +169,18 @@ module.exports = (app, web3, contract, mollieClient) => {
         }).catch((err) => {
             console.log('Failed to retrieve payment list');
             res.send('Failed to retrieve payment list');
+        });
+    });
+
+    app.get('/transaction/getUserDonations/:requestedUser', (req, res) => {
+        const requestedUser = req.params.requestedUser;
+
+        contract.methods.getUserDonations(requestedUser).call().then((donations) => {
+            console.log('Donations of requested user = ' + donations);
+            res.send(donations);
+        }).catch((err) => {
+            console.log('Failed to retrieve user specific donations');
+            res.send('Failed to retrieve user specific donations');
         });
     });
 }
