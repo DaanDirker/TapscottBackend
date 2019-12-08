@@ -39,10 +39,26 @@ module.exports = (app, web3, contract, mollieClient) => {
                 + "IBAN: " + consumerAccount + "\n");
             //TODO: Add payment details onto the smart contract!
 
-            contract.methods.addDonation(metadata, consumerAccount, paidAt, value)
+            console.log("================Convert Details================");
+            const contractValue = (value * 100);
+            console.log("No round = " + contractValue);
+            console.log(typeof contractValue);
+            const otherValue = Math.round(contractValue);
+            console.log("With round = " + otherValue);
+            console.log(typeof otherValue);
+
+            console.log("type of the paidAt is: ");
+            console.log(typeof paidAt);
+
+            const dateStuff = Date.parse(paidAt);
+            console.log("type of the dateStuff is: ");
+            console.log(typeof dateStuff);
+            console.log(dateStuff);
+
+            contract.methods.addDonation(metadata, consumerAccount, dateStuff, otherValue)
                 .send({ from: web3.eth.defaultAccount }).then(() => {
-                    console.log('Succeeded making a donation ' + amount);
-                    res.send('Setting number to ' + amount);
+                    console.log('Succeeded making a donation ' + otherValue);
+                    res.send('Setting number to ' + otherValue);
                 }).catch((err) => {
                     console.log('Failed to set donation');
                     console.log(err.toString());
