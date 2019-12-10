@@ -18,6 +18,8 @@ contract Donations {
 
     Donation[] donationCollection;
     Payment[] paymentCollection;
+    //Holds user collection in storage for return function
+    Donation[] userCollection;
 
     // enter a new donation
     function addDonation(string memory _name, string memory _sender, string memory _timestamp, uint _amount) public{
@@ -40,14 +42,14 @@ contract Donations {
         return paymentCollection;
     }
 
-    function getUserDonations(string memory _sender) public view returns(uint[] memory){
-        uint256[] memory sum = new uint256[](donationCollection.length);
+    function getUserDonations(string memory _sender) public returns(Donation[] memory){
+        userCollection.length = 0;
         for (uint i = 0; i < donationCollection.length; i++) {
             if(uint(keccak256(abi.encodePacked((_sender)))) == donationCollection[i].sender){
-                sum[i] = donationCollection[i].amount;
+                userCollection.push(donationCollection[i]);
             }
         }
-        return sum;
+        return userCollection;
     }
 
     //Check total donation amount
