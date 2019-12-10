@@ -1,14 +1,16 @@
 # TapscottBackend
 
-A basic NodeJS Express backend for communicating with our smart contract on the Ethereum network.
+This is a basic NodeJS Express backend for communicating with our smart contract on the Ethereum network.
 
 ## Requirements
 * Node, working on v12.11.0 
-* Ngrok or Localtunnel
-* Genache-cli or Genache client
+* Ngrok or Localtunnel(*)
+* Genache-cli or Genache client(*)
+
+(*) We focus on the following.
 
 ## Installation
-Install all required npm packages:
+We use NPM to install all of the modules and packages needed to run the project. Navigate to the back-end folder and install all required npm packages:
 ```bash
 npm i
 ```
@@ -21,9 +23,13 @@ Due to our application using Mollie as a third party for making transactions, we
 ngrok http [PORT_NUMBER]
 ```
 
-And for *localtunnel* the npm script "*npm run tunnel*" has been defined. Keep in mind that only one machine can use this subdomain.
+And for *localtunnel* the command can be run from your command line. Keep in mind that only one machine can use this subdomain. That means if two students want to work with the backend they both need to specify a different subdomain like *TapScott1* and *Tapscott2*.
+```bash
+lt --port [PORT_NUMBER] --subdomain [TAPSCOTT_DOMAIN] 
+```
 
 ### Ganache
+For the local *Ethereum* blockchain we use ganache. Install the application and creat a project.
 To use ganache the *ENVIRONMENT* value within the .env file needs to be set to "ganache". Make sure the .env file ganache host value and port match with the ganache-cli or ganache client settings. Make sure either one of them is running.
 
 Now the contract need to be deployed onto ganache. This can be done using the command:
@@ -35,10 +41,10 @@ This command returns a contract address which needs to be copied into the *CONTR
 
 ### Server
 
-Now that ganache or another environment has been set up, the server can be started:
+When ganache is running, your localtunnel has been activated and the needed truffle migration has been done, the server can be started.
 ```bash
 npm run server
 ```
-
+Whenever you change something in the project the server needs to be restarted. If changes are made to a Smart Contract then a new truffle migrate call has to be made before the new funcitonality can be used.
 ## Configuration
 All configuration within this project is held in the *.env* file.
