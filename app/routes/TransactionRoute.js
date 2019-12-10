@@ -37,15 +37,13 @@ module.exports = (app, web3, contract, mollieClient) => {
                 + "User: " + metadata + "\n"
                 + "Amount: " + value + " Currency: " + currency + "\n"
                 + "IBAN: " + consumerAccount + "\n");
-            //TODO: Add payment details onto the smart contract!
+
+            //Inserting Payment details onto smart contract
 
             const contractAmountFormat = Math.round((value * 100));
-            const dateFormat = Date.parse(paidAt);
+            const currentDate = new Date();
 
-            const thing = new Date(dateFormat * 1000);
-            console.log("Original date print: " + thing);
-
-            contract.methods.addDonation(metadata, consumerAccount, dateFormat, contractAmountFormat)
+            contract.methods.addDonation(metadata, consumerAccount, currentDate.toString(), contractAmountFormat)
                 .send({ from: web3.eth.defaultAccount }).then(() => {
                     console.log('Succeeded making a donation ' + contractAmountFormat);
                     res.send('Setting number to ' + contractAmountFormat);

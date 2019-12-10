@@ -6,7 +6,7 @@ contract Donations {
     struct Donation {
         string name;
         uint sender;
-        uint timestamp;
+        string timestamp;
         uint amount;
     }
 
@@ -20,7 +20,7 @@ contract Donations {
     Payment[] paymentCollection;
 
     // enter a new donation
-    function addDonation(string memory _name, string memory _sender, uint _timestamp, uint _amount) public{
+    function addDonation(string memory _name, string memory _sender, string memory _timestamp, uint _amount) public{
         uint encodedSender = uint(keccak256(abi.encodePacked(_sender)));
         Donation memory newDonation = Donation(_name, encodedSender, _timestamp, _amount);
         donationCollection.push(newDonation);
