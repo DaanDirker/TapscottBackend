@@ -52,3 +52,7 @@ build/contracts/*
 
 # build
 build/*
+
+# build contracts
+build/contracts/*
+

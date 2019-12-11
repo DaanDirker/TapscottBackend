@@ -18,16 +18,20 @@ let contract;
 
 // Setup 2 enviorements: ganache and ropsten testnet
 if (process.env.ENVIRONMENT == "ganache") {
-    web3 = new Web3(new Web3.providers.HttpProvider("http://" + process.env.GANACHE_HOST 
+    web3 = new Web3(new Web3.providers.HttpProvider("http://" + process.env.GANACHE_HOST
         + ":" + process.env.GANACHE_PORT));
-    
-    // Set account 
+
+    // Set default account     
     web3.eth.getAccounts().then((accounts) => {
         web3.eth.defaultAccount = accounts[0];
     });
 
-    const abi = require('./build/contracts/Testing.json').abi;
-    contract = new web3.eth.Contract(abi, process.env.CONTRACT_ADDRESS);
+    const abi = require('./build/contracts/Donations.json').abi;
+
+    // Set contract with transaction limit
+    contract = new web3.eth.Contract(abi, process.env.CONTRACT_ADDRESS, {
+        gas: 6721975
+    });
 } else if (process.env.ENVIRONMENT == "testnet") {
     web3 = new Web3(new Web3.providers.HttpProvider(process.env.INFURA_ENDPOINT));
 } else {
