@@ -14,17 +14,16 @@ contract Testing {
     }
 
     struct NumberObject {
-        uint numbertje;
+        uint number;
     }
 
-    NumberObject[] public hetNummer;
+    NumberObject[] public numberObject;
 
-    function setNummertje (uint _newNumber) public {
-        NumberObject memory test = NumberObject(_newNumber);
-        hetNummer.push(test);
+    function setNumberObject (uint _newNumber) public {
+        numberObject.push(NumberObject(_newNumber));
     }
 
-    function getNummertje() public view returns(NumberObject[] memory) {
-        return hetNummer;
+    function getNumberObject() public view returns(NumberObject[] memory) {
+        return numberObject;
     }
 }

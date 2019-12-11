@@ -48,8 +48,8 @@ module.exports = (app, web3, contract, mollieClient) => {
                     console.log('Succeeded making a donation ' + contractAmountFormat);
                     res.send('Setting number to ' + contractAmountFormat);
                 }).catch((err) => {
-                    console.log('Failed to set donation');
                     console.log(err.toString());
+                    res.send(err.toString());
                 });
         }
         res.status(200);
@@ -66,9 +66,8 @@ module.exports = (app, web3, contract, mollieClient) => {
                 console.log('Setting number to ' + amount);
                 res.send('Setting number to ' + amount);
             }).catch((err) => {
-                console.log('Failed to set number');
                 console.log(err.toString());
-                res.send('Failed to retrieve number');
+                res.send(err.toString());
             });
     });
 
@@ -77,8 +76,8 @@ module.exports = (app, web3, contract, mollieClient) => {
             console.log('Number = ' + number);
             res.send(number);
         }).catch((err) => {
-            console.log('Failed to retrieve number');
-            res.send('Failed to retrieve number');
+            console.log(err.toString());
+            res.send(err.toString());
         });
     });
 
@@ -91,8 +90,8 @@ module.exports = (app, web3, contract, mollieClient) => {
                 console.log('Setting number to ' + amount);
                 res.send('Setting number to ' + amount);
             }).catch((err) => {
-                console.log('Failed to set number');
                 console.log(err.toString());
+                res.send(err.toString());
             });
     });
 
@@ -101,9 +100,8 @@ module.exports = (app, web3, contract, mollieClient) => {
             console.log('Number = ' + number);
             res.send(number);
         }).catch((err) => {
-            console.log('Failed to retrieve number');
             console.log(err.toString());
-            res.send('Failed to retrieve number');
+            res.send(err.toString());
         });
     });
 
@@ -117,8 +115,8 @@ module.exports = (app, web3, contract, mollieClient) => {
                 console.log('Succeeded making a donation ' + amount);
                 res.send('Setting number to ' + amount);
             }).catch((err) => {
-                console.log('Failed to set donation');
                 console.log(err.toString());
+                res.send(err.toString());
             });
     });
 
@@ -130,9 +128,8 @@ module.exports = (app, web3, contract, mollieClient) => {
                 console.log('Succeeded making a donation ' + amount);
                 res.send('Setting number to ' + amount);
             }).catch((err) => {
-                console.log('Failed to set payment');
                 console.log(err.toString());
-                res.send('Failed to set payment');
+                res.send(err.toString());
             });
     });
 
@@ -141,8 +138,8 @@ module.exports = (app, web3, contract, mollieClient) => {
             console.log('Number list = ' + number);
             res.send(number);
         }).catch((err) => {
-            console.log('Failed to retrieve donation list');
-            res.send('Failed to retrieve donation list');
+            console.log(err.toString());
+            res.send(err.toString());
         });
     });
 
@@ -151,8 +148,8 @@ module.exports = (app, web3, contract, mollieClient) => {
             console.log('Number = ' + number);
             res.send(number);
         }).catch((err) => {
-            console.log('Failed to retrieve payment Sum');
-            res.send('Failed to retrieve payment Sum');
+            console.log(err.toString());
+            res.send(err.toString());
         });
     });
 
@@ -161,8 +158,8 @@ module.exports = (app, web3, contract, mollieClient) => {
             console.log('Number list = ' + number);
             res.send(number);
         }).catch((err) => {
-            console.log('Failed to retrieve donation list');
-            res.send('Failed to retrieve donation list');
+            console.log(err.toString());
+            res.send(err.toString());
         });
     });
 
@@ -171,8 +168,8 @@ module.exports = (app, web3, contract, mollieClient) => {
             console.log('Number list = ' + number);
             res.send(number);
         }).catch((err) => {
-            console.log('Failed to retrieve payment list');
-            res.send('Failed to retrieve payment list');
+            console.log(err.toString());
+            res.send(err.toString());
         });
     });
 
@@ -183,8 +180,8 @@ module.exports = (app, web3, contract, mollieClient) => {
             console.log('Donations of requested user = ' + donations);
             res.send(donations);
         }).catch((err) => {
-            console.log('Failed to retrieve user specific donations');
-            res.send('Failed to retrieve user specific donations');
+            console.log(err.toString());
+            res.send(err.toString());
         });
     });
 }
