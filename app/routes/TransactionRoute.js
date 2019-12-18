@@ -163,10 +163,30 @@ module.exports = (app, web3, contract, mollieClient) => {
         });
     });
 
+    app.get('/transaction/getLatestDonations', (req, res) => {
+        contract.methods.getlastestDonations().call().then((donations) => {
+            console.log('Latest Donation list = ' + donations);
+            res.send(donations);
+        }).catch((err) => {
+            console.log(err.toString());
+            res.send(err.toString());
+        });
+    });
+
     app.get('/transaction/getpayments', (req, res) => {
         contract.methods.getStructPayments().call().then((number) => {
-            console.log('Number list = ' + number);
+            console.log('Payment list = ' + number);
             res.send(number);
+        }).catch((err) => {
+            console.log(err.toString());
+            res.send(err.toString());
+        });
+    });
+
+    app.get('/transaction/getLatestPayments', (req, res) => {
+        contract.methods.getlastestPayments().call().then((payments) => {
+            console.log('Latest Payment list = ' + payments);
+            res.send(payments);
         }).catch((err) => {
             console.log(err.toString());
             res.send(err.toString());

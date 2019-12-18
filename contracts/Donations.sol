@@ -16,10 +16,16 @@ contract Donations {
         uint amount;
     }
 
+    //Constant value for amount of returns
+    uint constant latestAmount = 10;
+
     Donation[] donationCollection;
     Payment[] paymentCollection;
-    //Holds user collection in storage for return function
+
+    //Holds collections in storage for return functions
     Donation[] userCollection;
+    Donation[] latestDonationCollection;
+    Payment[] latestPaymentCollection;
 
     // enter a new donation
     function addDonation(string memory _name, string memory _sender, string memory _timestamp, uint _amount) public{
@@ -52,7 +58,30 @@ contract Donations {
         return userCollection;
     }
 
-    //Check total donation amount
+    function getlastestDonations() public returns(Donation[] memory){
+        if(donationCollection.length <= latestAmount){
+            return donationCollection;
+        } else{
+        latestDonationCollection.length = 0;
+        for (uint i = donationCollection.length - 1; i >= (donationCollection.length - latestAmount); i--) {
+            latestDonationCollection.push(donationCollection[i]);
+        }
+        return latestDonationCollection;
+        }
+    }
+
+    function getlastestPayments() public returns(Payment[] memory){
+        if(paymentCollection.length <= latestAmount){
+            return paymentCollection;
+        } else{
+        latestPaymentCollection.length = 0;
+        for (uint i = paymentCollection.length - 1; i >= (paymentCollection.length - latestAmount); i--) {
+            latestPaymentCollection.push(paymentCollection[i]);
+        }
+        return latestPaymentCollection;
+        }
+    }
+
     function calculateTotalDonationAmount() public view returns(uint){
         uint sum = 0;
         for (uint i = 0; i < donationCollection.length; i++) {
