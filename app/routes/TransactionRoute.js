@@ -153,7 +153,7 @@ module.exports = (app, web3, contract, mollieClient) => {
         });
     });
 
-    app.get('/transaction/getDonations', (req, res) => {
+    app.get('/transaction/donations', (req, res) => {
         contract.methods.getStructDonations().call().then((number) => {
             console.log('Number list = ' + number);
             res.send(number);
@@ -163,9 +163,19 @@ module.exports = (app, web3, contract, mollieClient) => {
         });
     });
 
-    app.get('/transaction/getpayments', (req, res) => {
+    app.get('/transaction/donations/latest', (req, res) => {
+        contract.methods.getlastestDonations().call().then((donations) => {
+            console.log('Latest Donation list = ' + donations);
+            res.send(donations);
+        }).catch((err) => {
+            console.log(err.toString());
+            res.send(err.toString());
+        });
+    });
+
+    app.get('/transaction/payments', (req, res) => {
         contract.methods.getStructPayments().call().then((number) => {
-            console.log('Number list = ' + number);
+            console.log('Payment list = ' + number);
             res.send(number);
         }).catch((err) => {
             console.log(err.toString());
@@ -173,7 +183,17 @@ module.exports = (app, web3, contract, mollieClient) => {
         });
     });
 
-    app.get('/transaction/getUserDonations/:requestedUser', (req, res) => {
+    app.get('/transaction/payments/latest', (req, res) => {
+        contract.methods.getlastestPayments().call().then((payments) => {
+            console.log('Latest Payment list = ' + payments);
+            res.send(payments);
+        }).catch((err) => {
+            console.log(err.toString());
+            res.send(err.toString());
+        });
+    });
+
+    app.get('/transaction/userDonations/:requestedUser', (req, res) => {
         const requestedUser = req.params.requestedUser;
 
         contract.methods.getUserDonations(requestedUser).call().then((donations) => {
