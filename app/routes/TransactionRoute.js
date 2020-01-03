@@ -174,9 +174,26 @@ module.exports = (app, web3, contract, mollieClient) => {
     });
 
     app.get('/transaction/payments', (req, res) => {
-        contract.methods.getStructPayments().call().then((number) => {
-            console.log('Payment list = ' + number);
-            res.send(number);
+        contract.methods.getStructPayments().call().then((paymentList) => {
+
+            var paymentObject = { boat: 0, fish: 0, personel: 0, total: 0 }
+            for (let index = 0; index < paymentList.length; index++) {
+                if (paymentList[index].receiver === "20771159077996790346024403699964704982549787798140344891181195711968031422221") {
+                    console.log("Found Fish Payment: " + paymentList[index].amount);
+                    paymentObject.boat += parseInt(paymentList[index].amount);
+                    paymentObject.total += parseInt(paymentList[index].amount);
+                } else if (paymentList[index].receiver === "40305427914166930834930145385368956343591728600012778625270193755027700126474") {
+                    console.log("Found Boat Payment: " + paymentList[index].amount);
+                    paymentObject.fish += parseInt(paymentList[index].amount);
+                    paymentObject.total += parseInt(paymentList[index].amount);
+                } else {
+                    paymentObject.total += parseInt(paymentList[index].amount);
+                }
+            }
+            // console.log("Total At the end is: " + paymentObject.total);
+            str = JSON.stringify(paymentObject);
+            console.log('Payment list = ' + str);
+            res.send(paymentList);
         }).catch((err) => {
             console.log(err.toString());
             res.send(err.toString());
