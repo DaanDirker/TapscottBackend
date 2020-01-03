@@ -1,7 +1,7 @@
 const axios = require('axios');
 require('dotenv').config();
 
-const WEBHOOK_URL = "https://tapscott.localtunnel.me/transaction/save";
+const WEBHOOK_URL = process.env.TUNNEL_HOST + "/transaction/save";
 
 module.exports = (app, mollieClient) => {
 
