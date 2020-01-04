@@ -29,6 +29,7 @@ module.exports = (app, web3, contract, mollieClient) => {
         res.send('Your Transactions!');
     });
 
+    //Webhook Endpoint
     app.post('/transaction/save', async (req, res) => {
         const paymentId = req.body.id;
         const payment = await mollieClient.payments.get(paymentId);
@@ -38,17 +39,10 @@ module.exports = (app, web3, contract, mollieClient) => {
             const { value, currency } = payment.amount;
             const { consumerAccount } = payment.details;
 
-            console.log("================Payment Details================");
-            console.log("Timestamp: " + paidAt + "\n"
-                + "User: " + metadata + "\n"
-                + "Amount: " + value + " Currency: " + currency + "\n"
-                + "IBAN: " + consumerAccount + "\n");
-
-            //Inserting Payment details onto smart contract
-
             const contractAmountFormat = Math.round((value * 100));
             const currentDate = new Date();
 
+            //Inserting Payment details onto smart contract
             contract.methods.addDonation(metadata, consumerAccount, currentDate.toString(), contractAmountFormat)
                 .send({ from: web3.eth.defaultAccount }).then(() => {
                     console.log('Succeeded making a donation ' + contractAmountFormat);
@@ -62,62 +56,14 @@ module.exports = (app, web3, contract, mollieClient) => {
         res.end();
     });
 
-    // TESTING METHODS
-
-    app.post('/test/:amount', (req, res) => {
-        const amount = req.params.amount;
-
-        contract.methods.setNumber(amount)
-            .send({ from: web3.eth.defaultAccount }).then(() => {
-                console.log('Setting number to ' + amount);
-                res.send('Setting number to ' + amount);
-            }).catch((err) => {
-                console.log(err.toString());
-                res.send(err.toString());
-            });
-    });
-
-    app.get('/test', (req, res) => {
-        contract.methods.getNumber().call().then((number) => {
-            console.log('Number = ' + number);
-            res.send(number);
-        }).catch((err) => {
-            console.log(err.toString());
-            res.send(err.toString());
-        });
-    });
-
-
-    app.post('/testNummer/:amount', (req, res) => {
-        const amount = req.params.amount;
-
-        contract.methods.setNummertje(amount)
-            .send({ from: web3.eth.defaultAccount }).then(() => {
-                console.log('Setting number to ' + amount);
-                res.send('Setting number to ' + amount);
-            }).catch((err) => {
-                console.log(err.toString());
-                res.send(err.toString());
-            });
-    });
-
-    app.get('/testNummer', (req, res) => {
-        contract.methods.getNummertje().call().then((number) => {
-            console.log('Number = ' + number);
-            res.send(number);
-        }).catch((err) => {
-            console.log(err.toString());
-            res.send(err.toString());
-        });
-    });
-
     // Donation contract calls
 
-    app.post('/transaction/addDonation/:name/:sender/:timestamp/:amount', (req, res) => {
-        const { name, sender, timestamp, amount } = req.params
+    app.post('/transaction/donation/:name/:amount', (req, res) => {
+        const { name, amount } = req.params
         const contractAmountFormat = Math.round((amount * 100));
+        const timestamp = new Date();
 
-        contract.methods.addDonation(name, sender, timestamp, contractAmountFormat)
+        contract.methods.addDonation(name, timestamp, contractAmountFormat)
             .send({ from: web3.eth.defaultAccount }).then(() => {
                 console.log('Succeeded making a donation of' + contractAmountFormat);
                 res.send('Succeeded making a donation of ' + contractAmountFormat);
@@ -127,9 +73,10 @@ module.exports = (app, web3, contract, mollieClient) => {
             });
     });
 
-    app.post('/transaction/addPayment/:receiver/:timestamp/:amount', (req, res) => {
-        const { receiver, timestamp, amount } = req.params
+    app.post('/transaction/payment/:receiver/:amount', (req, res) => {
+        const { receiver, amount } = req.params;
         const contractAmountFormat = Math.round((amount * 100));
+        const timestamp = new Date();
 
         contract.methods.makePayment(receiver, timestamp, contractAmountFormat)
             .send({ from: web3.eth.defaultAccount }).then(() => {
@@ -186,18 +133,10 @@ module.exports = (app, web3, contract, mollieClient) => {
     });
 
     app.get('/transaction/donations/latest', (req, res) => {
-        contract.methods.getlastestDonations().call().then((donations) => {
-            //convert donations to list with double amount values
-            var convertedList = [];
-            for (let index = 0; index < donations.length; index++) {
-                convertedList.push({
-                    name: donations[index].name,
-                    sender: donations[index].sender,
-                    timestamp: donations[index].timestamp,
-                    amount: (donations[index].amount / 100).toFixed(2)
-                });
-            }
-            res.send(convertedList);
+        contract.methods.getlatestDonations().call().then((donations) => {
+            let endDonations = [];
+            donations.forEach(donation => endDonations.push(formatDonation(donation)));
+            res.send(endDonations);
         }).catch((err) => {
             console.log(err.toString());
             res.send(err.toString());
@@ -207,7 +146,8 @@ module.exports = (app, web3, contract, mollieClient) => {
     app.get('/transaction/payments', (req, res) => {
         contract.methods.getStructPayments().call().then((paymentList) => {
 
-            var paymentObject = { transport: 0, labor: 0, fishingNets: 0, boatRental: 0, bank: 0, total: 0 }
+            var paymentObject = { transport: 0, labor: 0, fishingNets: 0, boatRental: 0, bank: 0, total: 0 };
+
             for (let index = 0; index < paymentList.length; index++) {
                 if (paymentList[index].receiver === IBAN1_TRANSPORT) {
                     console.log("Found Transport Payment: " + paymentList[index].amount);
@@ -264,7 +204,7 @@ module.exports = (app, web3, contract, mollieClient) => {
         });
     });
 
-    app.get('/transaction/userDonations/:requestedUser', (req, res) => {
+    app.get('/transaction/donations/user/:requestedUser', (req, res) => {
         const requestedUser = req.params.requestedUser;
 
         contract.methods.getUserDonations(requestedUser).call().then((donations) => {
@@ -275,4 +215,18 @@ module.exports = (app, web3, contract, mollieClient) => {
             res.send(err.toString());
         });
     });
+
+    let decimals = 2;
+    let divider = 100;
+
+    formatAmount = (value) => (value/divider).toFixed(decimals).toString();
+
+    formatDonation = (donation) => {
+        return {
+            name: donation[0],
+            sender: donation[1],
+            timestamp: donation[2],
+            amount: formatAmount(donation[3])
+        }
+    }
 }

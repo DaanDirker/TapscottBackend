@@ -28,8 +28,8 @@ contract Donations {
     Payment[] latestPaymentCollection;
 
     // enter a new donation
-    function addDonation(string memory _name, string memory _sender, string memory _timestamp, uint _amount) public{
-        uint encodedSender = uint(keccak256(abi.encodePacked(_sender)));
+    function addDonation(string memory _name, string memory _timestamp, uint _amount) public{
+        uint encodedSender = uint(keccak256(abi.encodePacked(msg.sender)));
         Donation memory newDonation = Donation(_name, encodedSender, _timestamp, _amount);
         donationCollection.push(newDonation);
     }
@@ -58,27 +58,27 @@ contract Donations {
         return userCollection;
     }
 
-    function getlastestDonations() public returns(Donation[] memory){
-        if(donationCollection.length <= latestAmount){
+    function getlatestDonations() public returns(Donation[] memory){
+        if(donationCollection.length <= latestAmount) {
             return donationCollection;
-        } else{
-        latestDonationCollection.length = 0;
-        for (uint i = donationCollection.length - 1; i >= (donationCollection.length - latestAmount); i--) {
-            latestDonationCollection.push(donationCollection[i]);
-        }
-        return latestDonationCollection;
+        } else {
+            latestDonationCollection.length = 0;
+            for (uint i = donationCollection.length - 1; i >= (donationCollection.length - latestAmount); i--) {
+                latestDonationCollection.push(donationCollection[i]);
+            }
+            return latestDonationCollection;
         }
     }
 
     function getlastestPayments() public returns(Payment[] memory){
-        if(paymentCollection.length <= latestAmount){
+        if (paymentCollection.length <= latestAmount) {
             return paymentCollection;
-        } else{
-        latestPaymentCollection.length = 0;
-        for (uint i = paymentCollection.length - 1; i >= (paymentCollection.length - latestAmount); i--) {
-            latestPaymentCollection.push(paymentCollection[i]);
-        }
-        return latestPaymentCollection;
+        } else {
+            latestPaymentCollection.length = 0;
+            for (uint i = paymentCollection.length - 1; i >= (paymentCollection.length - latestAmount); i--) {
+                latestPaymentCollection.push(paymentCollection[i]);
+            }
+            return latestPaymentCollection;
         }
     }
 
