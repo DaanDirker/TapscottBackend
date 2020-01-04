@@ -2,6 +2,12 @@ const maxTransactions = 20;
 
 module.exports = (app, web3, contract, mollieClient) => {
 
+    const IBAN1_TRANSPORT = "24876886716447363185588813355746526635635194205268490312410266622053044284305";
+    const IBAN2_LABOR = "21101672275253988548001904242265822070105250070583967579935560498662065541434";
+    const IBAN3_FISHING_NETS = "108225485566937822872576597874002787108276722130336665161358893314090900759191";
+    const IBAN4_BOAT_RENTAL = "50384645994308965417808879872058743009792248571523618537638218895414707210992";
+    const IBAN5_BANK = "23307515537208797899233296081011547068218340857635826214184846275146571848076";
+
     //Retrieving newest transactions
     app.get('/transactions/new/:limit', (req, res) => {
         const amount = req.params.limit;
@@ -176,24 +182,29 @@ module.exports = (app, web3, contract, mollieClient) => {
     app.get('/transaction/payments', (req, res) => {
         contract.methods.getStructPayments().call().then((paymentList) => {
 
-            var paymentObject = { boat: 0, fish: 0, personel: 0, total: 0 }
+            var paymentObject = { transport: 0, labor: 0, fishingNets: 0, boatRental: 0, bank: 0, total: 0 }
             for (let index = 0; index < paymentList.length; index++) {
-                if (paymentList[index].receiver === "20771159077996790346024403699964704982549787798140344891181195711968031422221") {
-                    console.log("Found Fish Payment: " + paymentList[index].amount);
-                    paymentObject.boat += parseInt(paymentList[index].amount);
-                    paymentObject.total += parseInt(paymentList[index].amount);
-                } else if (paymentList[index].receiver === "40305427914166930834930145385368956343591728600012778625270193755027700126474") {
-                    console.log("Found Boat Payment: " + paymentList[index].amount);
-                    paymentObject.fish += parseInt(paymentList[index].amount);
-                    paymentObject.total += parseInt(paymentList[index].amount);
-                } else {
-                    paymentObject.total += parseInt(paymentList[index].amount);
+                if (paymentList[index].receiver === IBAN1_TRANSPORT) {
+                    console.log("Found Transport Payment: " + paymentList[index].amount);
+                    paymentObject.transport += parseInt(paymentList[index].amount);
+                } else if (paymentList[index].receiver === IBAN2_LABOR) {
+                    console.log("Found Labor Payment: " + paymentList[index].amount);
+                    paymentObject.labor += parseInt(paymentList[index].amount);
+                } else if (paymentList[index].receiver === IBAN3_FISHING_NETS) {
+                    console.log("Found Fishing Nets Payment: " + paymentList[index].amount);
+                    paymentObject.fishingNets += parseInt(paymentList[index].amount);
+                } else if (paymentList[index].receiver === IBAN4_BOAT_RENTAL) {
+                    console.log("Found Boat rental Payment: " + paymentList[index].amount);
+                    paymentObject.boatRental += parseInt(paymentList[index].amount);
+                } else if (paymentList[index].receiver === IBAN5_BANK) {
+                    console.log("Found Bank Payment: " + paymentList[index].amount);
+                    paymentObject.bank += parseInt(paymentList[index].amount);
                 }
+                paymentObject.total += parseInt(paymentList[index].amount);
             }
-            // console.log("Total At the end is: " + paymentObject.total);
             str = JSON.stringify(paymentObject);
-            console.log('Payment list = ' + str);
-            res.send(paymentList);
+            console.log('Payment object = ' + str);
+            res.send(paymentObject);
         }).catch((err) => {
             console.log(err.toString());
             res.send(err.toString());
