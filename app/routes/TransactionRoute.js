@@ -115,11 +115,12 @@ module.exports = (app, web3, contract, mollieClient) => {
 
     app.post('/transaction/addDonation/:name/:sender/:timestamp/:amount', (req, res) => {
         const { name, sender, timestamp, amount } = req.params
+        const contractAmountFormat = Math.round((amount * 100));
 
-        contract.methods.addDonation(name, sender, timestamp, amount)
+        contract.methods.addDonation(name, sender, timestamp, contractAmountFormat)
             .send({ from: web3.eth.defaultAccount }).then(() => {
-                console.log('Succeeded making a donation ' + amount);
-                res.send('Setting number to ' + amount);
+                console.log('Succeeded making a donation of' + contractAmountFormat);
+                res.send('Succeeded making a donation of ' + contractAmountFormat);
             }).catch((err) => {
                 console.log(err.toString());
                 res.send(err.toString());
@@ -128,11 +129,12 @@ module.exports = (app, web3, contract, mollieClient) => {
 
     app.post('/transaction/addPayment/:receiver/:timestamp/:amount', (req, res) => {
         const { receiver, timestamp, amount } = req.params
+        const contractAmountFormat = Math.round((amount * 100));
 
-        contract.methods.makePayment(receiver, timestamp, amount)
+        contract.methods.makePayment(receiver, timestamp, contractAmountFormat)
             .send({ from: web3.eth.defaultAccount }).then(() => {
-                console.log('Succeeded making a donation ' + amount);
-                res.send('Setting number to ' + amount);
+                console.log('Succeeded making a payment of' + contractAmountFormat);
+                res.send('Succeeded making a donation of ' + contractAmountFormat);
             }).catch((err) => {
                 console.log(err.toString());
                 res.send(err.toString());
@@ -140,9 +142,10 @@ module.exports = (app, web3, contract, mollieClient) => {
     });
 
     app.get('/sum/donation', (req, res) => {
-        contract.methods.calculateTotalDonationAmount().call().then((number) => {
-            console.log('Number list = ' + number);
-            res.send(number);
+        contract.methods.calculateTotalDonationAmount().call().then((sum) => {
+            const decimalReturn = (sum / 100).toFixed(2);
+            console.log('Decimal number = ' + decimalReturn);
+            res.send(decimalReturn);
         }).catch((err) => {
             console.log(err.toString());
             res.send(err.toString());
@@ -150,19 +153,32 @@ module.exports = (app, web3, contract, mollieClient) => {
     });
 
     app.get('/sum/payment', (req, res) => {
-        contract.methods.calculateTotalPaymentAmount().call().then((number) => {
-            console.log('Number = ' + number);
-            res.send(number);
+        contract.methods.calculateTotalPaymentAmount().call().then((sum) => {
+            const decimalReturn = (sum / 100).toFixed(2);
+            console.log('Decimal number = ' + decimalReturn);
+            res.send(decimalReturn);
         }).catch((err) => {
             console.log(err.toString());
             res.send(err.toString());
         });
     });
 
+    var newDonations = [];
+
     app.get('/transaction/donations', (req, res) => {
-        contract.methods.getStructDonations().call().then((number) => {
-            console.log('Number list = ' + number);
-            res.send(number);
+        contract.methods.getStructDonations().call().then((donations) => {
+            //convert donations to list with double amount values
+            var convertedList = [];
+            for (let index = 0; index < donations.length; index++) {
+                convertedList.push({
+                    name: donations[index].name,
+                    sender: donations[index].sender,
+                    timestamp: donations[index].timestamp,
+                    amount: (donations[index].amount / 100).toFixed(2)
+                });
+            }
+
+            res.send(convertedList);
         }).catch((err) => {
             console.log(err.toString());
             res.send(err.toString());
@@ -171,8 +187,17 @@ module.exports = (app, web3, contract, mollieClient) => {
 
     app.get('/transaction/donations/latest', (req, res) => {
         contract.methods.getlastestDonations().call().then((donations) => {
-            console.log('Latest Donation list = ' + donations);
-            res.send(donations);
+            //convert donations to list with double amount values
+            var convertedList = [];
+            for (let index = 0; index < donations.length; index++) {
+                convertedList.push({
+                    name: donations[index].name,
+                    sender: donations[index].sender,
+                    timestamp: donations[index].timestamp,
+                    amount: (donations[index].amount / 100).toFixed(2)
+                });
+            }
+            res.send(convertedList);
         }).catch((err) => {
             console.log(err.toString());
             res.send(err.toString());
@@ -202,6 +227,14 @@ module.exports = (app, web3, contract, mollieClient) => {
                 }
                 paymentObject.total += parseInt(paymentList[index].amount);
             }
+            //Convert values to string with 2 decimals
+            paymentObject.transport = (paymentObject.transport / 100).toFixed(2);
+            paymentObject.labor = (paymentObject.labor / 100).toFixed(2);
+            paymentObject.fishingNets = (paymentObject.fishingNets / 100).toFixed(2);
+            paymentObject.boatRental = (paymentObject.boatRental / 100).toFixed(2);
+            paymentObject.bank = (paymentObject.bank / 100).toFixed(2);
+            paymentObject.total = (paymentObject.total / 100).toFixed(2);
+
             str = JSON.stringify(paymentObject);
             console.log('Payment object = ' + str);
             res.send(paymentObject);
@@ -213,8 +246,18 @@ module.exports = (app, web3, contract, mollieClient) => {
 
     app.get('/transaction/payments/latest', (req, res) => {
         contract.methods.getlastestPayments().call().then((payments) => {
-            console.log('Latest Payment list = ' + payments);
-            res.send(payments);
+            //convert payments to list with double amount values
+            var convertedList = [];
+            for (let index = 0; index < payments.length; index++) {
+                convertedList.push({
+                    receiver: payments[index].receiver,
+                    timestamp: payments[index].timestamp,
+                    amount: (payments[index].amount / 100).toFixed(2)
+                });
+            }
+            str = JSON.stringify(convertedList);
+            console.log('Latest Payment list = ' + str);
+            res.send(convertedList);
         }).catch((err) => {
             console.log(err.toString());
             res.send(err.toString());
