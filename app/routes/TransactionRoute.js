@@ -172,7 +172,7 @@ module.exports = (app, web3, contract, mollieClient) => {
     });
 
     app.get('/transaction/payments/latest', (req, res) => {
-        contract.methods.getlastestPayments().call().then((payments) => {
+        contract.methods.getlatestPayments().call().then((payments) => {
             let endPayments = [];
             payments.forEach(payment => endPayments.push(formatPayment(payment)));
             res.send(endPayments);

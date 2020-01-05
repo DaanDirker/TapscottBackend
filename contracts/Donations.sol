@@ -70,7 +70,7 @@ contract Donations {
         }
     }
 
-    function getlastestPayments() public returns(Payment[] memory){
+    function getlatestPayments() public returns(Payment[] memory){
         if (paymentCollection.length <= latestAmount) {
             return paymentCollection;
         } else {
