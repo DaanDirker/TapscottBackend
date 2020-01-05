@@ -1,0 +1,1 @@
+module.exports = { decimals: 2, divider: 100 };
