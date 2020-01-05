@@ -40,7 +40,7 @@ module.exports = (app, web3, contract, mollieClient) => {
             const { value, currency } = payment.amount;
             const { consumerAccount } = payment.details;
 
-            const contractAmountFormat = nonDecimalFormat(amount);
+            const contractAmountFormat = nonDecimalFormat(value);
             const currentDate = new Date();
 
             //Inserting Payment details onto smart contract
