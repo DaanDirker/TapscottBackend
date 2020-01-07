@@ -1,6 +1,4 @@
-const source = require('../../utils/Constants');
-const decimals = source.decimals;
-const divider = source.divider;
+const { decimalFormat, nonDecimalFormat } = require('../../utils/Constants');
 const maxTransactions = 20;
 
 module.exports = (app, web3, contract, mollieClient) => {
@@ -42,8 +40,8 @@ module.exports = (app, web3, contract, mollieClient) => {
             //Inserting Payment details onto smart contract
             contract.methods.addDonation(metadata, consumerAccount, currentDate.toString(), contractAmountFormat)
                 .send({ from: web3.eth.defaultAccount }).then(() => {
-                    console.log('Succeeded making a donation ' + contractAmountFormat);
-                    res.send('Setting number to ' + contractAmountFormat);
+                    console.log('Succeeded making a donation of ' + contractAmountFormat);
+                    res.send('Succeeded making a donation of ' + contractAmountFormat);
                 }).catch((err) => {
                     console.log(err.toString());
                     res.send(err.toString());
@@ -68,7 +66,7 @@ module.exports = (app, web3, contract, mollieClient) => {
             });
     });
 
-    app.get('/donation', (req, res) => {
+    app.get('/donation/all', (req, res) => {
         contract.methods.getStructDonations().call().then((donations) => {
             let endDonations = [];
             donations.forEach(donation => endDonations.push(formatDonation(donation)));
@@ -92,7 +90,7 @@ module.exports = (app, web3, contract, mollieClient) => {
 
     app.get('/donation/sum', (req, res) => {
         contract.methods.calculateTotalDonationAmount().call().then((sum) => {
-            const decimalReturn = (sum / 100).toFixed(2);
+            const decimalReturn = decimalFormat(sum);
             console.log('Decimal number = ' + decimalReturn);
             res.send(decimalReturn);
         }).catch((err) => {
@@ -113,8 +111,6 @@ module.exports = (app, web3, contract, mollieClient) => {
         });
     });
 
-    nonDecimalFormat = (value) => Math.round((value * divider));
-    decimalFormat = (value) => (value / divider).toFixed(decimals).toString();
 
     formatDonation = (donation) => {
         return {

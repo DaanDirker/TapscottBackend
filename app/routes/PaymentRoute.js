@@ -1,7 +1,5 @@
 const axios = require('axios');
-const source = require('../../utils/Constants');
-const decimals = source.decimals;
-const divider = source.divider;
+const { decimalFormat, nonDecimalFormat } = require('../../utils/Constants');
 
 require('dotenv').config();
 
@@ -56,6 +54,15 @@ module.exports = (app, web3, contract, mollieClient) => {
                 console.log(err.toString());
                 res.send(err.toString());
             });
+
+        // contract.methods.incrementPaymentCategory(receiver, contractAmountFormat)
+        //     .send({ from: web3.eth.defaultAccount }).then(() => {
+        //         console.log('Succeeded added amount to payment object ' + contractAmountFormat);
+        //         res.send('Succeeded added amount to payment object ' + contractAmountFormat);
+        //     }).catch((err) => {
+        //         console.log(err.toString());
+        //         res.send(err.toString());
+        //     });
     });
 
     //Returns object with all transaction types and total values
@@ -99,6 +106,19 @@ module.exports = (app, web3, contract, mollieClient) => {
         });
     });
 
+    app.get('/payment/object', (req, res) => {
+        contract.methods.getPaymentObject().call().then((paymentObject) => {
+            console.log(paymentObject);
+            // let paymentCollection = formatPaymentObject(paymentObject);
+            // str = JSON.stringify(paymentCollection);
+            // console.log('Payment object = ' + str);
+            res.send(paymentObject);
+        }).catch((err) => {
+            console.log(err.toString());
+            res.send(err.toString());
+        });
+    });
+
     app.get('/payment/latest', (req, res) => {
         contract.methods.getlatestPayments().call().then((payments) => {
             let endPayments = [];
@@ -112,7 +132,7 @@ module.exports = (app, web3, contract, mollieClient) => {
 
     app.get('/payment/sum', (req, res) => {
         contract.methods.calculateTotalPaymentAmount().call().then((sum) => {
-            const decimalReturn = (sum / 100).toFixed(2);
+            const decimalReturn = decimalFormat(sum);
             console.log('Decimal number = ' + decimalReturn);
             res.send(decimalReturn);
         }).catch((err) => {
@@ -121,14 +141,22 @@ module.exports = (app, web3, contract, mollieClient) => {
         });
     });
 
-    nonDecimalFormat = (value) => Math.round((value * divider));
-    decimalFormat = (value) => (value / divider).toFixed(decimals).toString();
-
     formatPayment = (payment) => {
         return {
             sender: payment[0],
             timestamp: payment[1],
             amount: decimalFormat(payment[2])
+        }
+    }
+
+    formatPaymentObject = (paymentObject) => {
+        return {
+            transport: paymentObject[0],
+            labor: paymentObject[1],
+            fishingNets: paymentObject[2],
+            BoatRental: paymentObject[3],
+            Bank: paymentObject[4],
+            Total: paymentObject[5]
         }
     }
 }
