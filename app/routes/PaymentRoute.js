@@ -54,17 +54,9 @@ module.exports = (app, web3, contract, mollieClient) => {
                 console.log(err.toString());
                 res.send(err.toString());
             });
-
-        // contract.methods.incrementPaymentCategory(receiver, contractAmountFormat)
-        //     .send({ from: web3.eth.defaultAccount }).then(() => {
-        //         console.log('Succeeded added amount to payment object ' + contractAmountFormat);
-        //         res.send('Succeeded added amount to payment object ' + contractAmountFormat);
-        //     }).catch((err) => {
-        //         console.log(err.toString());
-        //         res.send(err.toString());
-        //     });
     });
 
+    // TODO: Inefficient way of calculation
     //Returns object with all transaction types and total values
     app.get('/payment/collection', (req, res) => {
         contract.methods.getStructPayments().call().then((paymentList) => {
@@ -109,9 +101,9 @@ module.exports = (app, web3, contract, mollieClient) => {
     app.get('/payment/object', (req, res) => {
         contract.methods.getPaymentObject().call().then((paymentObject) => {
             console.log(paymentObject);
-            // let paymentCollection = formatPaymentObject(paymentObject);
-            // str = JSON.stringify(paymentCollection);
-            // console.log('Payment object = ' + str);
+            let paymentCollection = formatPaymentObject(paymentObject);
+            str = JSON.stringify(paymentCollection);
+            console.log('Payment object = ' + str);
             res.send(paymentObject);
         }).catch((err) => {
             console.log(err.toString());
