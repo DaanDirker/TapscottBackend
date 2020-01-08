@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { decimalFormat, nonDecimalFormat } = require('../../utils/Constants');
+const { decimalFormat, nonDecimalFormat, decimalFormatObject } = require('../../utils/Constants');
 
 require('dotenv').config();
 
@@ -83,12 +83,12 @@ module.exports = (app, web3, contract, mollieClient) => {
                 paymentObject.total += parseInt(paymentList[index].amount);
             }
             //Convert values to string with 2 decimals
-            paymentObject.transport = decimalFormat(paymentObject.transport);
-            paymentObject.labor = decimalFormat(paymentObject.labor);
-            paymentObject.fishingNets = decimalFormat(paymentObject.fishingNets);
-            paymentObject.boatRental = decimalFormat(paymentObject.boatRental);
-            paymentObject.bank = decimalFormat(paymentObject.bank);
-            paymentObject.total = decimalFormat(paymentObject.total);
+            paymentObject.transport = decimalFormatObject(paymentObject.transport);
+            paymentObject.labor = decimalFormatObject(paymentObject.labor);
+            paymentObject.fishingNets = decimalFormatObject(paymentObject.fishingNets);
+            paymentObject.boatRental = decimalFormatObject(paymentObject.boatRental);
+            paymentObject.bank = decimalFormatObject(paymentObject.bank);
+            paymentObject.total = decimalFormatObject(paymentObject.total);
 
             str = JSON.stringify(paymentObject);
             console.log('Payment object = ' + str);

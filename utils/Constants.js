@@ -9,4 +9,8 @@ module.exports = {
     decimalFormat: (value) => {
         return (value / divider).toFixed(decimals).toString();
     },
+
+    decimalFormatObject: (value) => {
+        return parseInt((value / divider).toFixed(decimals));
+    },
 }
