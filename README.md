@@ -48,3 +48,24 @@ npm run server
 Whenever you change something in the project the server needs to be restarted. If changes are made to a Smart Contract then a new truffle migrate call has to be made before the new funcitonality can be used.
 ## Configuration
 All configuration within this project is held in the *.env* file.
+
+## Contract calls
+
+We're using a single contract named *Donation.sol* where we have all our calls. Right now the application doesn't use all of them so some are for future uses on expanding the application. With the running server you can use an application like *Postman* or *Insomnia* to execute calls without the front-end running. They're split into 2 categories: *Payments* and *Donations*. 
+We used the port 3000 on localhost to which the following back-end calls can attach.
+
+### Payment
+POST */payment/:receiver/:amount* : Single payment with receiver and amount parameters
+POST */payment/mollie/:price/:name* : Creates a Mollie payment with price and name
+GET */payment/collection* : Returns a PaymentObject collection
+GET */payment/object* : Returns a PaymentObject Collection (non-functional for now)
+GET */payment/latest* : Returns 10 latest payments
+GET */payment/sum* : Returns a total Sum of all payments
+
+### Donation
+POST */donation/save* : Saves a donation from the Mollie Webhook
+POST */donation/:name/:sender/:amount* : Creates a donation with name and amount. *sender* contains the bank account.
+GET */donation/all* : Returns all donations
+GET */donation/latest* : Returns 10 latest donations
+GET */donation/sum* : Returns a total Sum of all donations
+GET */donation/user/:requestedUser* : Returns all donations from a certain user
