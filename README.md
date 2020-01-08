@@ -56,16 +56,26 @@ We used the port 3000 on localhost to which the following back-end calls can att
 
 ### Payment
 POST */payment/:receiver/:amount* : Single payment with receiver and amount parameters
+
 POST */payment/mollie/:price/:name* : Creates a Mollie payment with price and name
+
 GET */payment/collection* : Returns a PaymentObject collection
+
 GET */payment/object* : Returns a PaymentObject Collection (non-functional for now)
+
 GET */payment/latest* : Returns 10 latest payments
+
 GET */payment/sum* : Returns a total Sum of all payments
 
 ### Donation
 POST */donation/save* : Saves a donation from the Mollie Webhook
+
 POST */donation/:name/:sender/:amount* : Creates a donation with name and amount. *sender* contains the bank account.
+
 GET */donation/all* : Returns all donations
+
 GET */donation/latest* : Returns 10 latest donations
+
 GET */donation/sum* : Returns a total Sum of all donations
+
 GET */donation/user/:requestedUser* : Returns all donations from a certain user
