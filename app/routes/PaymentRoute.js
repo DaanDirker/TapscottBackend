@@ -86,6 +86,7 @@ module.exports = (app, web3, contract, mollieClient) => {
             paymentObject.transport = decimalFormat(paymentObject.transport);
             paymentObject.labor = decimalFormat(paymentObject.labor);
             paymentObject.fishingNets = decimalFormat(paymentObject.fishingNets);
+            paymentObject.boatRental = decimalFormat(paymentObject.boatRental);
             paymentObject.bank = decimalFormat(paymentObject.bank);
             paymentObject.total = decimalFormat(paymentObject.total);
 
