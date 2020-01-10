@@ -51,10 +51,6 @@ When ganache is running, your localtunnel has been activated, the needed truffle
 npm start
 ```
 We are using Nodemon so each update will refreash the server. However If there are updates to a smart contract to add a new truffle migrate call has to be made before the new funcitonality can be used.
-Another way
-```bash
-start server
-```
 ## Configuration
 All configuration within this project is held in the *.env* file.
 
