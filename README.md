@@ -28,9 +28,11 @@ And for *localtunnel* the command can be run from your command line. Keep in min
 lt --port [PORT_NUMBER] --subdomain [TAPSCOTT_DOMAIN] 
 ```
 
+Finally copy the setup subdomain given by either ngrok or localtunnel and navigate to *.env* file. Paste the input on the *TUNNEL_HOST* variable. This procedure is also required on the front-end. Visit the front-end Git readme for the location.
+
 ### Ganache
 For the local *Ethereum* blockchain we use ganache. Install the application and creat a project.
-To use ganache the *ENVIRONMENT* value within the .env file needs to be set to "ganache". Make sure the .env file ganache host value and port match with the ganache-cli or ganache client settings. Make sure either one of them is running.
+To use ganache the *ENVIRONMENT* value within the .env file needs to be set to "ganache". Make sure the *.env* file ganache host value and port match with the ganache-cli or ganache client settings. Make sure either one of them is running.
 
 For the first setup before deploying some build files need to be deleted. Navigate to *build/contracts* and delete the files inside. Now the contract needs to be deployed onto ganache. This can be done using the command:
 ```bash
@@ -46,9 +48,13 @@ For the mollie payments an account is required. After logging in on Mollie navig
 
 When ganache is running, your localtunnel has been activated, the needed truffle migration and your the *CONTRACT_ADDRESS*, *TUNNEL_HOST* with the Mollie configuration have been updated in the *.env* file, the server can be started.
 ```bash
-npm run server
+npm start
 ```
-Whenever you change something in the project the server needs to be restarted. If changes are made to a Smart Contract then a new truffle migrate call has to be made before the new funcitonality can be used.
+We are using Nodemon so each update will refreash the server. However If there are updates to a smart contract to add a new truffle migrate call has to be made before the new funcitonality can be used.
+Another way
+```bash
+start server
+```
 ## Configuration
 All configuration within this project is held in the *.env* file.
 
