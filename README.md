@@ -4,7 +4,7 @@ This is a basic NodeJS Express backend for communicating with our smart contract
 
 ## Requirements
 * Node, working on v12.11.0 
-* Ngrok or Localtunnel(*)
+* Ngrok or Localtunnel
 * Genache-cli or Genache client(*)
 
 (*) We focus on the following.
@@ -32,16 +32,19 @@ lt --port [PORT_NUMBER] --subdomain [TAPSCOTT_DOMAIN]
 For the local *Ethereum* blockchain we use ganache. Install the application and creat a project.
 To use ganache the *ENVIRONMENT* value within the .env file needs to be set to "ganache". Make sure the .env file ganache host value and port match with the ganache-cli or ganache client settings. Make sure either one of them is running.
 
-Now the contract need to be deployed onto ganache. This can be done using the command:
+For the first setup before deploying some build files need to be deleted. Navigate to *build/contracts* and delete the files inside. Now the contract needs to be deployed onto ganache. This can be done using the command:
 ```bash
 truffle migrate --network development
 ```
 
 This command returns a contract address which needs to be copied into the *CONTRACT_ADDRESS* value within the *.env* file. After that ganache has been set up. With network we specify development which has the gaslimit settings for the server.
 
+### Mollie
+For the mollie payments an account is required. After logging in on Mollie navigate to the settings dashboard. Here you can retrieve the Token needed for the payment interaction. Place this key inside the *.env* file.
+
 ### Server
 
-When ganache is running, your localtunnel has been activated and the needed truffle migration has been done, the server can be started.
+When ganache is running, your localtunnel has been activated, the needed truffle migration and your the *CONTRACT_ADDRESS*, *TUNNEL_HOST* with the Mollie configuration have been updated in the *.env* file, the server can be started.
 ```bash
 npm run server
 ```
